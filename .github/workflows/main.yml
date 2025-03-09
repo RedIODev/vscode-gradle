@@ -12,7 +12,7 @@ jobs:
     name: Build & Analyse
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           fetch-depth: 0 # required by sonarqube
       - name: Use Java 17
@@ -27,14 +27,14 @@ jobs:
           cache-dependency-path: extension/package-lock.json
           cache: npm
       - name: Cache npm cache directory
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
       - name: Checkout microsoft/build-server-for-gradle
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: microsoft/build-server-for-gradle
           path: extension/build-server-for-gradle
@@ -42,11 +42,11 @@ jobs:
         run: ../gradlew buildJars
         working-directory: extension/
       - name: Lint
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: lint
       - name: Build & Analyse Gradle Server
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: build
         env:
@@ -74,7 +74,7 @@ jobs:
         java-version: ["17", "21"]
         os: [ubuntu-latest, windows-latest, macos-latest]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use Node ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
@@ -87,7 +87,7 @@ jobs:
           java-version: ${{ matrix.java-version }}
           architecture: x64
       - name: Cache vscode
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: |
             extension/.vscode-test
@@ -109,23 +109,23 @@ jobs:
           unset npm_config_prefix
         if: matrix.os != 'windows-latest'
       - name: Test Gradle Language Server
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: gradle-language-server:test
         env:
           JAVA_HOME: ""
       - name: Prepare gradle-groovy-custom-build-file
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: build
           build-root-directory: extension/test-fixtures/gradle-groovy-custom-build-file
       - name: Prepare gradle-groovy-default-build-file
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: build
           build-root-directory: extension/test-fixtures/gradle-groovy-default-build-file
       - name: Prepare gradle-kotlin-default-build-file
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         with:
           arguments: build
           build-root-directory: extension/test-fixtures/gradle-kotlin-default-build-file
@@ -133,7 +133,7 @@ jobs:
         working-directory: extension/
         run: npm ci
       - name: Test extension
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         continue-on-error: true
         id: test
         with:
@@ -142,7 +142,7 @@ jobs:
           DISPLAY: ":99.0"
           CI: "true"
       - name: Retry test extension attempt 1
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         continue-on-error: true
         if: steps.test.outcome=='failure'
         id: retry1
@@ -153,7 +153,7 @@ jobs:
           CI: "true"
 
       - name: Retry test extension attempt 2
-        uses: gradle/gradle-build-action@v2
+        uses: gradle/gradle-build-action@v3
         continue-on-error: true
         if: steps.retry1.outcome=='failure'
         id: retry2
