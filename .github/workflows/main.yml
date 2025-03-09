@@ -1,5 +1,7 @@
 name: Build & Publish
 on:
+  workflow_dispatch:
+    branches: [main, develop]
   push:
     branches: [main, develop]
   pull_request:
